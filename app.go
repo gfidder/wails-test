@@ -3,6 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+
+	"github.com/alecthomas/repr"
+	"github.com/sleepinggenius2/gosmi/parser"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -19,6 +24,32 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) ParseMib() {
+	result, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		DefaultDirectory: "./",
+		Title:            "Select a mib",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "Mib Files (*.*)",
+				Pattern:     "*.*",
+			},
+		},
+	})
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if result != "" {
+		module, err := parser.ParseFile(result)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		repr.Println(module)
+	}
 }
 
 // Greet returns a greeting for the given name

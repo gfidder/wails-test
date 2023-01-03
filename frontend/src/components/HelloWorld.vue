@@ -1,28 +1,62 @@
 <script lang="ts" setup>
-import {reactive} from 'vue'
-import {Greet} from '../../wailsjs/go/main/App'
+import { reactive } from "vue";
+import { Greet } from "../../wailsjs/go/main/App";
+import { ref } from "vue";
+
+defineProps<{ msg: string }>();
+
+const count = ref(0);
 
 const data = reactive({
   name: "",
   resultText: "Please enter your name below 👇",
-})
+});
 
 function greet() {
-  Greet(data.name).then(result => {
-    data.resultText = result
-  })
+  Greet(data.name).then((result) => {
+    data.resultText = result;
+  });
 }
-
 </script>
 
 <template>
-  <main>
+  <h1>{{ msg }}</h1>
+
+  <p>
+    Recommended IDE setup:
+    <a href="https://code.visualstudio.com/" target="_blank">VS Code</a>
+    +
+    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
+  </p>
+
+  <p>See <code>README.md</code> for more information.</p>
+
+  <p>
+    <a href="https://vitejs.dev/guide/features.html" target="_blank">
+      Vite Docs
+    </a>
+    |
+    <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
+  </p>
+
+  <button type="button" @click="count++">count is: {{ count }}</button>
+  <p>
+    Edit
+    <code>components/HelloWorld.vue</code> to test hot module replacement.
+  </p>
+  <!-- <main>
     <div id="result" class="result">{{ data.resultText }}</div>
     <div id="input" class="input-box">
-      <input id="name" v-model="data.name" autocomplete="off" class="input" type="text"/>
+      <input
+        id="name"
+        v-model="data.name"
+        autocomplete="off"
+        class="input"
+        type="text"
+      />
       <button class="btn" @click="greet">Greet</button>
     </div>
-  </main>
+  </main> -->
 </template>
 
 <style scoped>
@@ -67,5 +101,20 @@ function greet() {
 .input-box .input:focus {
   border: none;
   background-color: rgba(255, 255, 255, 1);
+}
+a {
+  color: #42b983;
+}
+
+label {
+  margin: 0 0.5em;
+  font-weight: bold;
+}
+
+code {
+  background-color: #eee;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #304455;
 }
 </style>
