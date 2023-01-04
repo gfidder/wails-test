@@ -1,47 +1,23 @@
 <script lang="ts" setup>
 import HelloWorld from "./components/HelloWorld.vue";
 import OidTree from "./components/OidTree.vue";
-import { ref } from "vue";
-
-const dividerPosition = ref(50);
-
-function handleDragging(e: MouseEvent) {
-  const percentage = (e.pageX / window.innerWidth) * 100;
-
-  if (percentage >= 10 && percentage <= 90) {
-    dividerPosition.value = Number(percentage.toFixed(2));
-  }
-}
-
-function startDragging() {
-  document.addEventListener("mousemove", handleDragging);
-}
-
-function endDragging() {
-  document.removeEventListener("mousemove", handleDragging);
-}
+import DiscordSideBar from "./components/DiscordSideBar.vue";
 </script>
 
 <template>
-  <div class="wrapper" @mouseup="endDragging()">
-    <OidTree :style="{ width: `${dividerPosition}` }" />
-    <div
-      class="divider"
-      :style="{ left: `${dividerPosition}` }"
-      @mousedown="startDragging()"
-    ></div>
-    <div class="center" :style="{ width: `${100 - dividerPosition}` }">
-      <div class="logo-box">
-        <img class="logo vite" src="./assets/vite.svg" />
-        <img class="logo electron" src="./assets/electron.svg" />
-        <img class="logo vue" src="./assets/vue.svg" />
-      </div>
-      <!-- <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png" /> -->
-      <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
-      <div class="static-public">
-        Place static files in the <code>/public/</code> folder
-        <img style="width: 77px" :src="'./node.png'" />
-      </div>
+  <!-- <DiscordSideBar /> -->
+  <OidTree />
+  <div>
+    <div class="logo-box">
+      <img class="logo vite" src="./assets/vite.svg" />
+      <img class="logo electron" src="./assets/electron.svg" />
+      <img class="logo vue" src="./assets/vue.svg" />
+    </div>
+    <!-- <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png" /> -->
+    <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+    <div class="static-public">
+      Place static files in the <code>/public/</code> folder
+      <img style="width: 77px" :src="'./node.png'" />
     </div>
   </div>
 </template>
@@ -103,25 +79,5 @@ function endDragging() {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-origin: content-box;
-}
-
-.wrapper {
-  height: 100vh;
-  display: flex;
-
-  .divider {
-    height: 100vh;
-    width: 6px;
-    background: #fff;
-    transform: translateX(-3px);
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    cursor: col-resize;
-  }
-
-  .center div {
-    height: 50vh;
-  }
 }
 </style>

@@ -1,4 +1,4 @@
-module changeme
+module github.com/willowbrowser/snmpmibbrowser
 
 go 1.18
 
@@ -35,5 +35,3 @@ require (
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
-
-// replace github.com/wailsapp/wails/v2 v2.1.0 => C:\Users\gabfi\go\pkg\mod

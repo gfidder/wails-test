@@ -8,6 +8,7 @@ import (
 	"github.com/alecthomas/repr"
 	"github.com/sleepinggenius2/gosmi/parser"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/willowbrowser/snmpmibbrowser/internal/oid"
 )
 
 // App struct
@@ -55,4 +56,9 @@ func (a *App) ParseMib() {
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func (a *App) GetCurrentOids() []oid.Oid {
+	var myslice []oid.Oid
+	return myslice
 }

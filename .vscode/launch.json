@@ -37,6 +37,13 @@
       "program": "${workspaceFolder}/build/bin/test-wails.exe",
       "preLaunchTask": "build dev",
       "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Wails: Debug Frontend",
+      "request": "launch",
+      "type": "firefox",
+      "url": "http://localhost:34115",
+      "webRoot": "${workspaceFolder}/frontend"
     }
   ]
 }
