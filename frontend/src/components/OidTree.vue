@@ -4,6 +4,10 @@ import Divider from "./partials/Divider.vue";
 import YouTubeIcon from "~icons/mdi/youtube";
 import BlenderSoftwareIcon from "~icons/mdi/blender-software";
 import TreeMenu from "./partials/TreeMenu.vue";
+import { EventsOn } from "../../wailsjs/runtime/runtime";
+import { ref } from "vue";
+
+const showMessage = ref(false);
 
 let tree = {
   label: "root",
@@ -29,6 +33,10 @@ let tree = {
     },
   ],
 };
+
+EventsOn("mibsLoaded", () => {
+  showMessage.value = !showMessage.value;
+});
 </script>
 
 <template>
@@ -41,14 +49,7 @@ let tree = {
     >
       <h2 class="text-2xl text-black flex items-center">SNMP Oids</h2>
     </div>
-    <SideBarIcon>
-      <YouTubeIcon height="28" width="28" />
-    </SideBarIcon>
-    <Divider />
-    <SideBarIcon>
-      <BlenderSoftwareIcon height="29" width="28" />
-    </SideBarIcon>
-    <Divider />
+    <h2 v-if="showMessage">Message</h2>
     <div class="flex justify-start text-left">
       <TreeMenu
         class=""

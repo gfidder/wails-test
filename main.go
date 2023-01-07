@@ -47,11 +47,16 @@ func main() {
 		runtime.Quit(app.ctx)
 	})
 
+	OperationsMenu := AppMenu.AddSubmenu("Operations")
+	OperationsMenu.AddText("&Show Message", nil, func(cd *menu.CallbackData) {
+		runtime.EventsEmit(app.ctx, "mibsLoaded")
+	})
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:            "test-wails",
-		Width:            1024,
-		Height:           768,
+		Width:            1280,
+		Height:           780,
 		Assets:           assets,
 		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
 		OnStartup:        app.startup,

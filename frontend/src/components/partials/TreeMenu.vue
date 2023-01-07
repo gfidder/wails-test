@@ -35,7 +35,7 @@ const hasChildren = computed(() => {
 <template>
   <div>
     <div class="pb-1 mb-1" @click="toggleChildren">
-      <div :style="indent" :class="cursorClass" class="flex">
+      <div :style="indent" :class="cursorClass" class="flex text-gray-50">
         <PlusBoxOutline v-if="hasChildren && !showChildren" />
         <MinusBoxOutline v-else-if="hasChildren && showChildren" />
         <!--TODO : add padding here so everything lines up even if there is no child type icon -->

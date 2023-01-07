@@ -3,7 +3,7 @@ module github.com/willowbrowser/snmpmibbrowser
 go 1.18
 
 require (
-	github.com/alecthomas/repr v0.1.1
+	github.com/alecthomas/repr v0.0.0-20210301060118-828286944d6a
 	github.com/sleepinggenius2/gosmi v0.4.4
 	github.com/wailsapp/wails/v2 v2.3.1
 )
