@@ -61,8 +61,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Test
-      #   run: go test ./backend/...
+      - name: Test
+        run: go test ./internal/...
 
       - name: Build
         run: wails build -tags ${{ matrix.config.build_tags }}

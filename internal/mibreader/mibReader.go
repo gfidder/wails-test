@@ -16,6 +16,7 @@ func ReadMib(fileName string) {
 	}
 
 	// need information on what mibs we have loaded in, just in case we already have the proper information
+	// worry about this last. Don't even know how we are going to store it yet
 	for _, moduleImport := range module.Body.Imports {
 		duplicateModule := false
 		for i := range imports {
@@ -29,6 +30,10 @@ func ReadMib(fileName string) {
 		if !duplicateModule {
 			imports = append(imports, moduleImport)
 		}
+	}
+
+	for _, newImport := range imports {
+		fmt.Printf("Import is %s\n", newImport.Module.String())
 	}
 
 	// TODO : if the imports are not located in the same folder as the mib, need to throw an error
