@@ -18,21 +18,21 @@ jobs:
         - {
             name: "Windows",
             artifact: "Windows.tar.gz",
-            executable_name: "Restic-Browser.exe",
+            executable_name: "mib-browser.exe",
             os: windows-2022,
             build_tags: "production,desktop",
           }
         - {
             name: "Ubuntu",
             artifact: "Linux.tar.gz",
-            executable_name: "restic-browser",
+            executable_name: "mib-browser",
             os: ubuntu-20.04,
             build_tags: "production,desktop",
           }
         - {
             name: "macOS",
             artifact: "macOS.tar.gz",
-            executable_name: "restic-browser.app",
+            executable_name: "mib-browser.app",
             os: macos-11,
             build_tags: "production,desktop",
           }
@@ -100,15 +100,16 @@ jobs:
       #     product-path: ./build/bin/${{ matrix.config.executable_name }}
       #     verbose: false
 
-      - name: Archive
-        uses: thedoctor0/zip-release@main
-        with:
-          type: tar
-          directory: build
-          path: bin
-          filename: ${{ matrix.config.artifact }}
+      # - name: Archive
+      #   uses: thedoctor0/zip-release@main
+      #   with:
+      #     type: tar
+      #     directory: build
+      #     path: bin
+      #     filename: ${{ matrix.config.artifact }}
 
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          path: build/${{ matrix.config.artifact }}
+          name: ${{ matrix.config.executable_name }}
+          path: build/bin/${{ matrix.config.executable_name }}

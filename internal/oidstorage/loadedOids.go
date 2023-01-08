@@ -84,12 +84,12 @@ func appendOid(oidSlice *[]Oid, newOid Oid) {
 	*oidSlice = append(*oidSlice, newOid)
 }
 
-func (l *LoadedOids) FindDirectParent(parentName string) Oid {
-	var parentOid Oid
+func (l *LoadedOids) FindDirectParent(parentName string) *Oid {
+	var parentOid *Oid
 
 	for _, oid := range l.oids {
 		if oid.Name == parentName {
-			parentOid = oid
+			parentOid = &oid
 			break
 		}
 	}

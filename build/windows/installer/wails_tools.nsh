@@ -5,7 +5,7 @@
 !include "FileFunc.nsh"
 
 !ifndef INFO_PROJECTNAME
-    !define INFO_PROJECTNAME "test-wails"
+    !define INFO_PROJECTNAME "snmp-mib-browser"
 !endif
 !ifndef INFO_COMPANYNAME
     !define INFO_COMPANYNAME "Willow Browser"

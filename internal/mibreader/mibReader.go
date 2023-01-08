@@ -100,25 +100,61 @@ func (m *MibReader) addIdentity(moduleIdentity *parser.ModuleIdentity, mibName s
 	oidNum := appendOidNumber(parentOid.OID, *moduleIdentity.Oid.SubIdentifiers[1].Number)
 
 	newStoredOid := oidstorage.CreateNewOid(moduleIdentity.Name.String(), oidNum, mibName)
+	newStoredOid.Description = moduleIdentity.Description
 	m.newOids = append(m.newOids, newStoredOid)
 	parentOid.AddChildren(&newStoredOid)
 }
 
 func (m *MibReader) readNewOids(module *parser.Module) {
 	// TODO : fix this up
+	mibName := module.Name.String()
 	newStoredOid := oidstorage.CreateNewOid("", "", "")
 
 	for _, newOid := range module.Body.Nodes {
 		fmt.Println(newOid.Name.String())
+		parentName := newOid.Oid.SubIdentifiers[0].Name.String()
+		parentOid := m.loadedOids.FindDirectParent(parentName)
+
+		if parentOid == nil {
+			parentOid = m.findParentInNewOids(parentName)
+
+			if parentOid == nil {
+				log.Fatalln("No suitable parent found!")
+			}
+		}
 
 		if newOid.ObjectIdentifier {
-			// parentOid := m.loadedOids.FindDirectParent(newOid.Oid.SubIdentifiers[0].Name.String())
+			oidNum := appendOidNumber(parentOid.OID, *newOid.SubIdentifier)
 			newStoredOid.Name = newOid.Name.String()
-		} else {
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			m.newOids = append(m.newOids, newOidStore)
 
+		} else if newOid.ObjectIdentity != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.ObjectIdentity.Description
+			newOidStore.Status = newOid.ObjectIdentity.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.ObjectIdentity
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
 		}
 	}
 }
+
+func (m *MibReader) findParentInNewOids(parentName string) *oidstorage.Oid {
+	var parentOid *oidstorage.Oid
+
+	for _, oid := range m.newOids {
+		if oid.Name == parentName {
+			parentOid = &oid
+			break
+		}
+	}
+
+	return parentOid
+}
+
+// TODO : some way to overwrite duplicates. Assuming the mib is an updated mib
 
 func appendOidNumber(oidNumStr string, newOidNum types.SmiSubId) string {
 	var sb strings.Builder

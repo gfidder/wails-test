@@ -1,6 +1,6 @@
 {
-  "name": "test-wails",
-  "outputfilename": "test-wails",
+  "name": "snmp-mib-browser",
+  "outputfilename": "mib-browser",
   "frontend:install": "yarn",
   "frontend:build": "yarn build",
   "frontend:dev:watcher": "yarn dev",
