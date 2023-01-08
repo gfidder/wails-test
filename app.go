@@ -68,6 +68,5 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) GetCurrentOids() []oidstorage.Oid {
-	var myslice []oidstorage.Oid
-	return myslice
+	return a.loadedOids.GetLoadedOids()
 }

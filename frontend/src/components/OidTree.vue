@@ -1,13 +1,23 @@
 <script lang="ts" setup>
-import SideBarIcon from "./SideBarIcon.vue";
-import Divider from "./partials/Divider.vue";
-import YouTubeIcon from "~icons/mdi/youtube";
-import BlenderSoftwareIcon from "~icons/mdi/blender-software";
-import TreeMenu from "./partials/TreeMenu.vue";
+import SendIcon from "~icons/mdi/send";
+import TreeMenu from "@/components/partials/TreeMenu.vue";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
+import { GetCurrentOids } from "../../wailsjs/go/main/App";
+import { oidstorage } from "../../wailsjs/go/models";
 import { ref } from "vue";
 
 const showMessage = ref(false);
+
+// TODO : actually read in OIDs from golang
+
+let oids = Array<oidstorage.Oid>();
+
+function TestThing() {
+  GetCurrentOids().then((val) => {
+    oids = val;
+  });
+  console.log("test");
+}
 
 let tree = {
   label: "root",
@@ -50,6 +60,12 @@ EventsOn("mibsLoaded", () => {
       <h2 class="text-2xl text-black flex items-center">SNMP Oids</h2>
     </div>
     <h2 v-if="showMessage">Message</h2>
+    <button
+      class="relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto bg-gray-400 hover:bg-green-600 dark:bg-gray-800 text-green-500 hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg group"
+      @click="TestThing"
+    >
+      <SendIcon height="20" width="20" />
+    </button>
     <div class="flex justify-start text-left">
       <TreeMenu
         class=""

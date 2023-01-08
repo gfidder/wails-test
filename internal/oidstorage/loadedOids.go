@@ -98,3 +98,43 @@ func (l *LoadedOids) FindDirectParent(parentName string) *Oid {
 
 	return parentOid
 }
+
+func (l *LoadedOids) AddNewOids(newOids []Oid) {
+	newMibs := []string{}
+	newLoadedOids := []Oid{}
+	overwriteOids := []Oid{}
+
+	for _, oid := range newOids {
+		foundMib := false
+		for _, mib := range l.loadedMibs {
+			if mib == oid.Mib {
+				foundMib = true
+				break
+			}
+		}
+
+		if !foundMib {
+			newMibs = append(newMibs, oid.Mib)
+		}
+
+		foundOid := false
+		for _, oldOids := range l.oids {
+			if (oldOids.Name == oid.Name) && (oldOids.OID == oid.OID) {
+				overwriteOids = append(overwriteOids, oid)
+				foundOid = true
+				break
+			}
+		}
+
+		if !foundOid {
+			newLoadedOids = append(newLoadedOids, oid)
+		}
+	}
+
+	l.oids = append(l.oids, newLoadedOids...)
+	l.loadedMibs = append(l.loadedMibs, newMibs...)
+}
+
+func (l *LoadedOids) GetLoadedOids() []Oid {
+	return l.oids
+}

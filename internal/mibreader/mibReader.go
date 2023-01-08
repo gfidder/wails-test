@@ -2,11 +2,11 @@ package mibreader
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/sleepinggenius2/gosmi/parser"
 	"github.com/sleepinggenius2/gosmi/types"
+	"github.com/willowbrowser/snmpmibbrowser/internal/log"
 	"github.com/willowbrowser/snmpmibbrowser/internal/oidstorage"
 )
 
@@ -32,7 +32,7 @@ func (m *MibReader) ReadMib(fileName string) {
 
 	module, err := parser.ParseFile(fileName)
 	if err != nil {
-		log.Fatalln(err)
+		log.Error(fmt.Sprintf("Error parsing mib: %v", err))
 	}
 
 	// load in stuff from already involved OIDs and types for the parsing process
@@ -44,6 +44,8 @@ func (m *MibReader) ReadMib(fileName string) {
 
 	m.addIdentity(module.Body.Identity, module.Name.String())
 	m.readNewOids(module)
+
+	m.loadedOids.AddNewOids(m.newOids)
 
 	// TODO : if the imports are not located in the same folder as the mib, need to throw an error
 	// by emitting an event for Vue to deal with
@@ -70,7 +72,7 @@ func (m *MibReader) readNewImports(module *parser.Module) {
 	}
 
 	for _, newImport := range m.imports {
-		fmt.Printf("Import is %s\n", newImport.Module.String())
+		log.Info(fmt.Sprintf("Import is %s\n", newImport.Module.String()))
 	}
 }
 
@@ -91,7 +93,7 @@ func (m *MibReader) readNewTypes(module *parser.Module) {
 	}
 
 	for _, newType := range m.types {
-		fmt.Printf("New type is %s\n", newType.Name.String())
+		log.Info(fmt.Sprintf("New type is %s\n", newType.Name.String()))
 	}
 }
 
@@ -111,7 +113,6 @@ func (m *MibReader) readNewOids(module *parser.Module) {
 	newStoredOid := oidstorage.CreateNewOid("", "", "")
 
 	for _, newOid := range module.Body.Nodes {
-		fmt.Println(newOid.Name.String())
 		parentName := newOid.Oid.SubIdentifiers[0].Name.String()
 		parentOid := m.loadedOids.FindDirectParent(parentName)
 
@@ -119,12 +120,12 @@ func (m *MibReader) readNewOids(module *parser.Module) {
 			parentOid = m.findParentInNewOids(parentName)
 
 			if parentOid == nil {
-				log.Fatalln("No suitable parent found!")
+				log.Warn(fmt.Sprintf("No suitable parent found for oid: %s\n", newOid.Name.String()))
 			}
 		}
 
 		if newOid.ObjectIdentifier {
-			oidNum := appendOidNumber(parentOid.OID, *newOid.SubIdentifier)
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
 			newStoredOid.Name = newOid.Name.String()
 			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
 			m.newOids = append(m.newOids, newOidStore)
@@ -137,6 +138,8 @@ func (m *MibReader) readNewOids(module *parser.Module) {
 			newOidStore.Type = oidstorage.ObjectIdentity
 			parentOid.AddChildren(&newOidStore)
 			m.newOids = append(m.newOids, newOidStore)
+		} else {
+			fmt.Printf("Still need some work to properly add oid: %s\n", newOid.Name.String())
 		}
 	}
 }

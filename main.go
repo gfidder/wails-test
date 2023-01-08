@@ -2,7 +2,11 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
+	"os"
+
+	logger "github.com/willowbrowser/snmpmibbrowser/internal/log"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
@@ -15,8 +19,16 @@ import (
 var assets embed.FS
 
 func main() {
+	logFile, err := os.OpenFile("file.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error creating file: %v", err)
+	}
+	defer logFile.Close()
+
 	// Create an instance of the app structure
 	app := NewApp()
+
+	logger.Enable(logFile)
 
 	AppMenu := menu.NewMenu()
 	FileMenu := AppMenu.AddSubmenu("File")
@@ -33,7 +45,7 @@ func main() {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			logger.Error(fmt.Sprintf("Error opening file: %v", err))
 		}
 
 		if file != "" {
@@ -51,7 +63,7 @@ func main() {
 	})
 
 	// Create application with options
-	err := wails.Run(&options.App{
+	err = wails.Run(&options.App{
 		Title:            "test-wails",
 		Width:            1280,
 		Height:           780,
@@ -65,6 +77,6 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		logger.Error(fmt.Sprintf("Error closing mib-reader: %v", err))
 	}
 }

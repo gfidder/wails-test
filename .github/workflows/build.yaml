@@ -113,3 +113,4 @@ jobs:
         with:
           name: ${{ matrix.config.executable_name }}
           path: build/bin/${{ matrix.config.executable_name }}
+          if: ${{ matrix.config.name != 'macOS' }}

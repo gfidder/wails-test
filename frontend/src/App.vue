@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import HelloWorld from "./components/HelloWorld.vue";
-import OidTree from "./components/OidTree.vue";
+import HelloWorld from "@/components/HelloWorld.vue";
+import OidTree from "@/components/OidTree.vue";
 import DiscordSideBar from "./components/DiscordSideBar.vue";
 </script>
 
 <template>
   <!-- <DiscordSideBar /> -->
   <OidTree />
-  <div>
+  <div class="overflow-hidden">
     <div class="logo-box">
       <img class="logo vite" src="./assets/vite.svg" />
       <img class="logo electron" src="./assets/electron.svg" />
