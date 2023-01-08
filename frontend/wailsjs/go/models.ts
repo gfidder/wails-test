@@ -1,4 +1,4 @@
-export namespace oid {
+export namespace oidstorage {
 	
 	export class Oid {
 	    name: string;

@@ -4,8 +4,6 @@ import (
 	"embed"
 	"log"
 
-	"github.com/willowbrowser/snmpmibbrowser/internal/mibreader"
-
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
@@ -39,7 +37,7 @@ func main() {
 		}
 
 		if file != "" {
-			mibreader.ReadMib(file)
+			app.mibReader.ReadMib(file)
 		}
 	})
 	FileMenu.AddSeparator()
