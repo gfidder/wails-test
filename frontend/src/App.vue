@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import HelloWorld from "@/components/HelloWorld.vue";
 import OidTree from "@/components/OidTree.vue";
-import DiscordSideBar from "./components/DiscordSideBar.vue";
 </script>
 
 <template>

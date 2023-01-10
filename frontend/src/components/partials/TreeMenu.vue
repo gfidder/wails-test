@@ -7,6 +7,7 @@ const showChildren = ref(false);
 
 const props = defineProps<{
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   nodes?: any[];
   depth: number;
 }>();
@@ -44,12 +45,14 @@ const hasChildren = computed(() => {
         </p>
       </div>
     </div>
-    <TreeMenu
-      v-if="showChildren"
-      v-for="node in nodes"
-      :nodes="node.nodes"
-      :label="node.label"
-      :depth="depth + 1"
-    ></TreeMenu>
+    <div v-if="showChildren">
+      <TreeMenu
+        v-for="node in nodes"
+        :key="node.label"
+        :nodes="node.nodes"
+        :label="node.label"
+        :depth="depth + 1"
+      ></TreeMenu>
+    </div>
   </div>
 </template>

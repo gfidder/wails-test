@@ -61,8 +61,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Test
+      - name: Test Backend
         run: go test ./internal/...
+
+      - name: Install Frontend Dependencies
+        run: yarn
+        working-directory: frontend
+
+      - name: Unit test frontend
+        run: yarn run coverage
+        working-directory: frontend
+
+      - name: Run linter frontend
+        run: yarn lint --no-fix
+        working-directory: frontend
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./frontend/coverage/
+          fail_ci_if_error: true
+          flags: unittests,frontend
+          verbose: false
 
       - name: Build
         run: wails build -tags ${{ matrix.config.build_tags }}

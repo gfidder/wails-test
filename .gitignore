@@ -5,3 +5,9 @@ tmp
 
 # log files
 *.log
+
+# build artifacts
+stats.html
+
+# coverage
+coverage

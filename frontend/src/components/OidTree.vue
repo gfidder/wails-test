@@ -4,6 +4,7 @@ import TreeMenu from "@/components/partials/TreeMenu.vue";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { GetCurrentOids } from "../../wailsjs/go/main/App";
 import { oidstorage } from "../../wailsjs/go/models";
+import { OidTree, TreeSorter } from "../utils/treeBuilder";
 import { ref } from "vue";
 
 const showMessage = ref(false);
@@ -11,15 +12,17 @@ const showMessage = ref(false);
 // TODO : actually read in OIDs from golang
 
 let oids = Array<oidstorage.Oid>();
+let oidTree: OidTree;
 
 function TestThing() {
   GetCurrentOids().then((val) => {
     oids = val;
+    oidTree = new TreeSorter(val).createOidTree();
   });
   console.log("test");
 }
 
-let tree = {
+const tree = {
   label: "root",
   nodes: [
     {
