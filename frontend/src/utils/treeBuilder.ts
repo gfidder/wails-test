@@ -29,46 +29,36 @@ export class TreeSorter {
 
     this.#newOids.splice(i, 1);
 
-    // call some function here?
-
-    const parent = tree;
-    const nextChild = tree.children;
-    let elementsFound = true;
-
-    while (elementsFound) {
-      const parentOidNum = TreeSorter.getNumber(parent.oid);
-
-      const childIndexArray = Array<number>();
-
-      for (let i = 0; i < this.#newOids.length; i++) {
-        const oid = this.#newOids[i];
-        const oidNumber = TreeSorter.getNumber(oid.oid);
-        if (parentOidNum + 1 === oidNumber) {
-          childIndexArray.push(i);
-        }
-      }
-
-      childIndexArray.forEach((index) => {
-        const newOidObject: OidTree = {
-          name: this.#newOids[index].name,
-          oid: this.#newOids[index].oid,
-        };
-        nextChild?.push(newOidObject);
-      });
-
-      childIndexArray.forEach((index) => {
-        this.#newOids.splice(index, 1);
-      });
-
-      if (this.#newOids.length === 0) {
-        elementsFound = false;
-        // need something with parent here
-      }
-
-      elementsFound = false;
-    }
+    this.recursiveTreeBuild(tree);
 
     return tree;
+  }
+
+  recursiveTreeBuild(parent: OidTree) {
+    const childOidArray = Array<oidstorage.Oid>();
+
+    this.#newOids.forEach((oid) => {
+      if (TreeSorter.isDirectChild(parent.oid, oid.oid)) {
+        childOidArray.push(oid);
+      }
+    });
+
+    childOidArray.sort((a, b) => a.oid.localeCompare(b.oid));
+
+    childOidArray.forEach((oid) => {
+      const newChildNode: OidTree = {
+        name: oid.name,
+        oid: oid.oid,
+      };
+
+      if (parent.children === undefined) {
+        parent.children = Array<OidTree>();
+      }
+
+      parent.children?.push(newChildNode);
+
+      this.recursiveTreeBuild(newChildNode);
+    });
   }
 
   static isDirectChild(parentOid: string, childOid: string): boolean {
@@ -80,7 +70,6 @@ export class TreeSorter {
     ) {
       const lastPeriodIndex = childOid.lastIndexOf(".");
       const childComparer = childOid.substring(0, lastPeriodIndex);
-      console.log(childComparer);
 
       if (childComparer === parentOid) {
         isChild = true;

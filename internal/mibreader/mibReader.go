@@ -13,12 +13,14 @@ import (
 type MibReader struct {
 	imports    []parser.Import
 	types      []parser.Type
-	loadedOids oidstorage.LoadedOids
+	loadedOids *oidstorage.LoadedOids
 	newOids    []oidstorage.Oid
 }
 
-func NewMibReader(loadedOids oidstorage.LoadedOids) *MibReader {
+func NewMibReader(loadedOids *oidstorage.LoadedOids) *MibReader {
 	// maybe when we return the new mibReader, load in the already loaded Oids
+
+	fmt.Printf("Address of loadedOids:\t%p\n", loadedOids)
 
 	return &MibReader{
 		imports:    []parser.Import{},
@@ -26,6 +28,10 @@ func NewMibReader(loadedOids oidstorage.LoadedOids) *MibReader {
 		loadedOids: loadedOids,
 		newOids:    []oidstorage.Oid{},
 	}
+}
+
+func (m *MibReader) PrintLoadedOidsAddress() {
+	fmt.Printf("Address of m.loadedOids:\t%p\n", m.loadedOids)
 }
 
 func (m *MibReader) ReadMib(fileName string) {

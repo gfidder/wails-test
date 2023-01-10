@@ -2,13 +2,12 @@
 import { computed, ref } from "vue";
 import PlusBoxOutline from "~icons/mdi/plus-box-outline";
 import MinusBoxOutline from "~icons/mdi/minus-box-outline";
+import { OidTree } from "../../utils/treeBuilder";
 
 const showChildren = ref(false);
 
 const props = defineProps<{
-  label: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  nodes?: any[];
+  node: OidTree;
   depth: number;
 }>();
 
@@ -21,7 +20,7 @@ function toggleChildren() {
 }
 
 const cursorClass = computed(() => {
-  if (props.nodes !== undefined) {
+  if (props.node.children !== undefined) {
     return "cursor-pointer";
   } else {
     return "cursor-default";
@@ -29,7 +28,7 @@ const cursorClass = computed(() => {
 });
 
 const hasChildren = computed(() => {
-  return props.nodes !== undefined;
+  return props.node.children !== undefined;
 });
 </script>
 
@@ -41,16 +40,15 @@ const hasChildren = computed(() => {
         <MinusBoxOutline v-else-if="hasChildren && showChildren" />
         <!--TODO : add padding here so everything lines up even if there is no child type icon -->
         <p class="pl-1">
-          {{ label }}
+          {{ node.name }}
         </p>
       </div>
     </div>
     <div v-if="showChildren">
       <TreeMenu
-        v-for="node in nodes"
-        :key="node.label"
-        :nodes="node.nodes"
-        :label="node.label"
+        v-for="oid in node.children"
+        :key="oid.oid"
+        :node="oid"
         :depth="depth + 1"
       ></TreeMenu>
     </div>

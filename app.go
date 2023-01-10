@@ -15,18 +15,23 @@ import (
 // App struct
 type App struct {
 	ctx        context.Context
-	mibReader  mibreader.MibReader
-	loadedOids oidstorage.LoadedOids
+	mibReader  *mibreader.MibReader
+	loadedOids *oidstorage.LoadedOids
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
 	loadedOids := oidstorage.NewLoadedOids()
-	mibReader := mibreader.NewMibReader(*loadedOids)
+	mibReader := mibreader.NewMibReader(loadedOids)
+
+	fmt.Printf("Address of loadedOids:\t%p\n", loadedOids)
+	fmt.Printf("Address of mibReader:\t%p\n", mibReader)
+
+	mibReader.PrintLoadedOidsAddress()
 
 	return &App{
-		mibReader:  *mibReader,
-		loadedOids: *loadedOids,
+		mibReader:  mibReader,
+		loadedOids: loadedOids,
 	}
 }
 
@@ -34,6 +39,9 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+
+	fmt.Printf("Address of a.loadedOids:\t%p\n", a.loadedOids)
+	fmt.Printf("Address of a.mibReader:\t%p\n", a.mibReader)
 }
 
 func (a *App) ParseMib() {
@@ -68,5 +76,6 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) GetCurrentOids() []oidstorage.Oid {
+	// apparently this loaded oids isn't the same as the one in the mib reader class
 	return a.loadedOids.GetLoadedOids()
 }

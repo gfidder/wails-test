@@ -1,4 +1,4 @@
-import { assert, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { oidstorage } from "../../wailsjs/go/models";
 import { OidTree, TreeSorter } from "../utils/treeBuilder";
 
@@ -33,71 +33,71 @@ describe("class test suite", () => {
       ],
     };
 
-    //expect(tree).toEqual(expectedTree);
+    expect(tree).toEqual(expectedTree);
   });
 
-  // it("multiple children at single level", () => {
-  //   const oids = Array<oidstorage.Oid>();
+  it("multiple children at single level", () => {
+    const oids = Array<oidstorage.Oid>();
 
-  //   const firstOid = new oidstorage.Oid('{"name": "iso","oid": ".1"}');
-  //   const secondOid = new oidstorage.Oid('{"name": "org","oid": ".1.3"}');
-  //   const thirdOid = new oidstorage.Oid('{"name": "dod","oid": ".1.3.6"}');
-  //   const thirdOidChild1 = new oidstorage.Oid(
-  //     '{"name": "thirdOidChild1","oid": ".1.3.6.1"}'
-  //   );
-  //   const thirdOidChild2 = new oidstorage.Oid(
-  //     '{"name": "thirdOidChild2","oid": ".1.3.6.2"}'
-  //   );
-  //   const thirdOidChild3 = new oidstorage.Oid(
-  //     '{"name": "thirdOidChild3","oid": ".1.3.6.3"}'
-  //   );
+    const firstOid = new oidstorage.Oid('{"name": "iso","oid": ".1"}');
+    const secondOid = new oidstorage.Oid('{"name": "org","oid": ".1.3"}');
+    const thirdOid = new oidstorage.Oid('{"name": "dod","oid": ".1.3.6"}');
+    const thirdOidChild1 = new oidstorage.Oid(
+      '{"name": "thirdOidChild1","oid": ".1.3.6.1"}'
+    );
+    const thirdOidChild2 = new oidstorage.Oid(
+      '{"name": "thirdOidChild2","oid": ".1.3.6.2"}'
+    );
+    const thirdOidChild3 = new oidstorage.Oid(
+      '{"name": "thirdOidChild3","oid": ".1.3.6.3"}'
+    );
 
-  //   oids.push(
-  //     firstOid,
-  //     thirdOid,
-  //     secondOid,
-  //     thirdOidChild2,
-  //     thirdOidChild1,
-  //     thirdOidChild3
-  //   );
+    oids.push(
+      firstOid,
+      thirdOid,
+      secondOid,
+      thirdOidChild2,
+      thirdOidChild1,
+      thirdOidChild3
+    );
 
-  //   const obj = new TreeSorter(oids);
+    const obj = new TreeSorter(oids);
 
-  //   const tree = obj.createOidTree();
+    const tree = obj.createOidTree();
 
-  //   const expectedTree: OidTree = {
-  //     name: "iso",
-  //     oid: ".1",
-  //     children: [
-  //       {
-  //         name: "org",
-  //         oid: ".1.3",
-  //         children: [
-  //           {
-  //             name: "dod",
-  //             oid: ".1.3.6",
-  //             children: [
-  //               {
-  //                 name: "thirdOidChild1",
-  //                 oid: ".1.3.6.1",
-  //               },
-  //               {
-  //                 name: "thirdOidChild2",
-  //                 oid: ".1.3.6.2",
-  //               },
-  //               {
-  //                 name: "thirdOidChild3",
-  //                 oid: ".1.3.6.3",
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   };
+    const expectedTree: OidTree = {
+      name: "iso",
+      oid: ".1",
+      children: [
+        {
+          name: "org",
+          oid: ".1.3",
+          children: [
+            {
+              name: "dod",
+              oid: ".1.3.6",
+              children: [
+                {
+                  name: "thirdOidChild1",
+                  oid: ".1.3.6.1",
+                },
+                {
+                  name: "thirdOidChild2",
+                  oid: ".1.3.6.2",
+                },
+                {
+                  name: "thirdOidChild3",
+                  oid: ".1.3.6.3",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
 
-  //   expect(tree).toEqual(expectedTree);
-  // });
+    expect(tree).toEqual(expectedTree);
+  });
 
   // it("realistic example", () => {
   //   let oids = Array<oidstorage.Oid>();

@@ -3,49 +3,22 @@ import SendIcon from "~icons/mdi/send";
 import TreeMenu from "@/components/partials/TreeMenu.vue";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { GetCurrentOids } from "../../wailsjs/go/main/App";
-import { oidstorage } from "../../wailsjs/go/models";
 import { OidTree, TreeSorter } from "../utils/treeBuilder";
-import { ref } from "vue";
+import { ref, reactive, onBeforeMount } from "vue";
 
 const showMessage = ref(false);
+const updateCounter = ref(0);
 
-// TODO : actually read in OIDs from golang
+onBeforeMount(ReloadMibTree);
 
-let oids = Array<oidstorage.Oid>();
-let oidTree: OidTree;
-
-function TestThing() {
-  GetCurrentOids().then((val) => {
-    oids = val;
-    oidTree = new TreeSorter(val).createOidTree();
-  });
-  console.log("test");
+async function ReloadMibTree() {
+  otherOidTree.oidTree = new TreeSorter(await GetCurrentOids()).createOidTree();
+  updateCounter.value++;
 }
 
-const tree = {
-  label: "root",
-  nodes: [
-    {
-      label: "item1",
-      nodes: [
-        {
-          label: "item1.1",
-        },
-        {
-          label: "item1.2",
-          nodes: [
-            {
-              label: "item1.2.1",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: "item2",
-    },
-  ],
-};
+const otherOidTree = reactive({
+  oidTree: { name: "oids loading...", oid: "place2" } as OidTree,
+});
 
 EventsOn("mibsLoaded", () => {
   showMessage.value = !showMessage.value;
@@ -65,15 +38,15 @@ EventsOn("mibsLoaded", () => {
     <h2 v-if="showMessage">Message</h2>
     <button
       class="relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto bg-gray-400 hover:bg-green-600 dark:bg-gray-800 text-green-500 hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg group"
-      @click="TestThing"
+      @click="ReloadMibTree"
     >
       <SendIcon height="20" width="20" />
     </button>
     <div class="flex justify-start text-left">
       <TreeMenu
+        :key="updateCounter"
         class=""
-        :label="tree.label"
-        :nodes="tree.nodes"
+        :node="otherOidTree.oidTree"
         :depth="0"
       ></TreeMenu>
     </div>
