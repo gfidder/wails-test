@@ -69,15 +69,12 @@ jobs:
       - name: Test Backend
         run: go test ./internal/... -race -coverprofile='coverage.out' -covermode=atomic
 
-      - name: get tree
-        run: ls
-
       - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           flags: unittests,backend,${{ matrix.config.name }}
-          verbose: true
+          verbose: false
 
       - name: Install Frontend Dependencies
         run: yarn
@@ -87,10 +84,6 @@ jobs:
         run: yarn coverage
         working-directory: frontend
 
-      - name: Run linter frontend
-        run: yarn lint --no-fix
-        working-directory: frontend
-
       - name: Upload frontend coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -98,6 +91,10 @@ jobs:
           fail_ci_if_error: true
           flags: unittests,frontend,${{ matrix.config.name }}
           verbose: false
+
+      - name: Run linter frontend
+        run: yarn lint --no-fix
+        working-directory: frontend
 
       - name: Build
         run: wails build -tags ${{ matrix.config.build_tags }}
