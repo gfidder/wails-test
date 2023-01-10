@@ -68,11 +68,7 @@ jobs:
 
       - name: Test Backend
         run: go test ./internal/... -race -coverprofile=coverage.out -covermode=atomic
-
-      - name: get tree (Windows)
-        run: ls
-        if: ${{ matrix.config.name == 'Windows' }}
-        shell: powershell
+        shell: cmd
 
       - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v3
