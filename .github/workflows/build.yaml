@@ -67,8 +67,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Test Backend
-        run: go test ./internal/... -race -coverprofile=coverage.out -covermode=atomic
-        shell: cmd
+        run: go test ./internal/... -race -coverprofile='coverage.out' -covermode=atomic
+
+      - name: get tree
+        run: ls
 
       - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v3
