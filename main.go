@@ -50,16 +50,12 @@ func main() {
 
 		if file != "" {
 			app.mibReader.ReadMib(file)
+			runtime.EventsEmit(app.ctx, "mibsLoaded")
 		}
 	})
 	FileMenu.AddSeparator()
 	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(cd *menu.CallbackData) {
 		runtime.Quit(app.ctx)
-	})
-
-	OperationsMenu := AppMenu.AddSubmenu("Operations")
-	OperationsMenu.AddText("&Show Message", nil, func(cd *menu.CallbackData) {
-		runtime.EventsEmit(app.ctx, "mibsLoaded")
 	})
 
 	// Create application with options

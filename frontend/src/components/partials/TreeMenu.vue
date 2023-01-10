@@ -19,25 +19,25 @@ function toggleChildren() {
   showChildren.value = !showChildren.value;
 }
 
-const cursorClass = computed(() => {
+function cursorClass(): string {
   if (props.node.children !== undefined) {
     return "cursor-pointer";
   } else {
     return "cursor-default";
   }
-});
+}
 
-const hasChildren = computed(() => {
+function hasChildren(): boolean {
   return props.node.children !== undefined;
-});
+}
 </script>
 
 <template>
   <div>
     <div class="pb-1 mb-1" @click="toggleChildren">
-      <div :style="indent" :class="cursorClass" class="flex text-gray-50">
-        <PlusBoxOutline v-if="hasChildren && !showChildren" />
-        <MinusBoxOutline v-else-if="hasChildren && showChildren" />
+      <div :style="indent" :class="cursorClass()" class="flex text-gray-50">
+        <PlusBoxOutline v-if="hasChildren() && !showChildren" />
+        <MinusBoxOutline v-else-if="hasChildren() && showChildren" />
         <!--TODO : add padding here so everything lines up even if there is no child type icon -->
         <p class="pl-1">
           {{ node.name }}

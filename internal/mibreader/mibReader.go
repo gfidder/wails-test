@@ -30,10 +30,6 @@ func NewMibReader(loadedOids *oidstorage.LoadedOids) *MibReader {
 	}
 }
 
-func (m *MibReader) PrintLoadedOidsAddress() {
-	fmt.Printf("Address of m.loadedOids:\t%p\n", m.loadedOids)
-}
-
 func (m *MibReader) ReadMib(fileName string) {
 
 	module, err := parser.ParseFile(fileName)

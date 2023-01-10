@@ -20,9 +20,7 @@ const otherOidTree = reactive({
   oidTree: { name: "oids loading...", oid: "place2" } as OidTree,
 });
 
-EventsOn("mibsLoaded", () => {
-  showMessage.value = !showMessage.value;
-});
+EventsOn("mibsLoaded", ReloadMibTree);
 </script>
 
 <template>
@@ -43,12 +41,7 @@ EventsOn("mibsLoaded", () => {
       <SendIcon height="20" width="20" />
     </button>
     <div class="flex justify-start text-left">
-      <TreeMenu
-        :key="updateCounter"
-        class=""
-        :node="otherOidTree.oidTree"
-        :depth="0"
-      ></TreeMenu>
+      <TreeMenu class="" :node="otherOidTree.oidTree" :depth="0"></TreeMenu>
     </div>
   </div>
 </template>

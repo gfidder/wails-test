@@ -4,6 +4,4 @@ import {oidstorage} from '../models';
 
 export function GetCurrentOids():Promise<Array<oidstorage.Oid>>;
 
-export function Greet(arg1:string):Promise<string>;
-
 export function ParseMib():Promise<void>;
