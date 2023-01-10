@@ -69,19 +69,10 @@ jobs:
       - name: Test Backend
         run: go test ./internal/... -race -coverprofile=coverage.out -covermode=atomic
 
-      - name: Fetch action
-        id: pl
-        uses: Rishabh510/Path-lister-action@master
-        with:
-          path: "./"
-          type: ".out"
-
-      - name: Output results
-        run: |
-          echo "Found ${{ steps.pl.outputs.path_count }} file(s) with this extension:"
-          for i in ${{ steps.pl.outputs.paths }}; do
-          echo $i
-          done
+      - name: get tree (Windows)
+        run: ls
+        if: ${{ matrix.config.name == 'Windows' }}
+        shell: powershell
 
       - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v3
