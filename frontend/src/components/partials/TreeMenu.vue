@@ -30,16 +30,29 @@ function cursorClass(): string {
 function hasChildren(): boolean {
   return props.node.children !== undefined;
 }
+
+function calculatePadding(): string {
+  let padding = "pl-1";
+  if (!hasChildren()) {
+    padding = "pl-6";
+  }
+
+  return padding;
+}
 </script>
 
 <template>
   <div>
     <div class="pb-1 mb-1" @click="toggleChildren">
-      <div :style="indent" :class="cursorClass()" class="flex text-gray-50">
-        <PlusBoxOutline v-if="hasChildren() && !showChildren" />
+      <div :style="indent" :class="cursorClass()" class="flex text-gray-900">
+        <PlusBoxOutline
+          v-if="hasChildren() && !showChildren"
+          height="20"
+          width="20"
+        />
         <MinusBoxOutline v-else-if="hasChildren() && showChildren" />
         <!--TODO : add padding here so everything lines up even if there is no child type icon -->
-        <p class="pl-1">
+        <p :class="calculatePadding()">
           {{ node.name }}
         </p>
       </div>
