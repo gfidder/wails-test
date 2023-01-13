@@ -2,10 +2,12 @@ package mibreader
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/sleepinggenius2/gosmi/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/willowbrowser/snmpmibbrowser/internal/oidstorage"
 )
 
 func TestAppendOidNumbers(t *testing.T) {
@@ -24,4 +26,14 @@ func TestAppendOidNumbers(t *testing.T) {
 			assert.Equal(t, parameter.expected, actual)
 		})
 	}
+}
+
+func TestReadMibWithStandardImports(t *testing.T) {
+	// TODO : actually complete this test
+}
+
+func TestReadMibWithMultipleImports(t *testing.T) {
+	// TODO : actually complete this test
+	m := NewMibReader(oidstorage.NewLoadedOids())
+	m.ReadMib(fmt.Sprintf("..%s..%stest%sCISCO-QOS-PIB-MIB.txt", string(os.PathSeparator), string(os.PathSeparator), string(os.PathSeparator)))
 }

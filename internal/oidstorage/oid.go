@@ -3,8 +3,13 @@ package oidstorage
 type OidType string
 
 const (
-	ObjectIdentity OidType = "ObjectIdentity"
-	ModuleIdentity OidType = "ModuleIdentity"
+	ObjectIdentity    OidType = "ObjectIdentity"
+	ModuleIdentity    OidType = "ModuleIdentity"
+	ObjectType        OidType = "ObjectType"
+	ModuleCompliance  OidType = "ModuleCompliance"
+	ObjectGroup       OidType = "ObjectGroup"
+	NotificationType  OidType = "NotificationType"
+	NotificationGroup OidType = "NotificationGroup"
 )
 
 type Oid struct {

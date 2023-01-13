@@ -50,8 +50,11 @@ function calculatePadding(): string {
           height="20"
           width="20"
         />
-        <MinusBoxOutline v-else-if="hasChildren() && showChildren" />
-        <!--TODO : add padding here so everything lines up even if there is no child type icon -->
+        <MinusBoxOutline
+          v-else-if="hasChildren() && showChildren"
+          height="20"
+          width="20"
+        />
         <p :class="calculatePadding()">
           {{ node.name }}
         </p>

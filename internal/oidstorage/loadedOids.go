@@ -138,3 +138,7 @@ func (l *LoadedOids) AddNewOids(newOids []Oid) {
 func (l *LoadedOids) GetLoadedOids() []Oid {
 	return l.oids
 }
+
+func (l *LoadedOids) GetLoadedMibs() []string {
+	return l.loadedMibs
+}

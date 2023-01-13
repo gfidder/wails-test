@@ -2,28 +2,23 @@ package mibreader
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/sleepinggenius2/gosmi/parser"
 	"github.com/sleepinggenius2/gosmi/types"
-	"github.com/willowbrowser/snmpmibbrowser/internal/log"
 	"github.com/willowbrowser/snmpmibbrowser/internal/oidstorage"
+	"github.com/willowbrowser/snmpmibbrowser/internal/utils"
 )
 
 type MibReader struct {
-	imports    []parser.Import
 	types      []parser.Type
 	loadedOids *oidstorage.LoadedOids
 	newOids    []oidstorage.Oid
 }
 
 func NewMibReader(loadedOids *oidstorage.LoadedOids) *MibReader {
-	// maybe when we return the new mibReader, load in the already loaded Oids
-
-	fmt.Printf("Address of loadedOids:\t%p\n", loadedOids)
-
 	return &MibReader{
-		imports:    []parser.Import{},
 		types:      []parser.Type{},
 		loadedOids: loadedOids,
 		newOids:    []oidstorage.Oid{},
@@ -31,20 +26,51 @@ func NewMibReader(loadedOids *oidstorage.LoadedOids) *MibReader {
 }
 
 func (m *MibReader) ReadMib(fileName string) {
-
-	module, err := parser.ParseFile(fileName)
-	if err != nil {
-		log.Error(fmt.Sprintf("Error parsing mib: %v", err))
-	}
+	// new import struct variable is kinda screwing with this
+	module := m.parseMibFile(fileName)
 
 	// load in stuff from already involved OIDs and types for the parsing process
 
-	m.readNewImports(module)
+	newImports := m.readNewImports(module)
+
+	for _, newImport := range newImports {
+		alreadyImported := false
+		for _, existingImport := range m.loadedOids.GetLoadedMibs() {
+			if newImport.Module.String() == existingImport {
+				alreadyImported = true
+				break
+			}
+		}
+
+		if !alreadyImported {
+			mibFileExtensions := []string{"", ".txt", ".mib"}
+			pathToMibs := m.getBasePathOfMib(fileName)
+			var newImportPath string
+			fileExists := false
+
+			for _, extension := range mibFileExtensions {
+				newImportPath = pathToMibs + newImport.Module.String() + extension
+				if utils.FileExists(newImportPath) {
+					fileExists = true
+					break
+				}
+			}
+
+			if fileExists {
+				m.ReadMib(newImportPath)
+			} else {
+				fmt.Printf("WARNING: following mib was not in path: %s\n", newImport.Module.String())
+				// TODO : return error to frontend
+			}
+		}
+	}
 
 	// need to import the new stuff before going through types
 	m.readNewTypes(module)
 
-	m.addIdentity(module.Body.Identity, module.Name.String())
+	if module.Body.Identity != nil {
+		m.addIdentity(module.Body.Identity, module.Name.String())
+	}
 	m.readNewOids(module)
 
 	m.loadedOids.AddNewOids(m.newOids)
@@ -55,27 +81,44 @@ func (m *MibReader) ReadMib(fileName string) {
 	fmt.Println("Did it")
 }
 
-func (m *MibReader) readNewImports(module *parser.Module) {
+func (m MibReader) getBasePathOfMib(filePath string) string {
+	index := strings.LastIndex(filePath, string(os.PathSeparator))
+	return filePath[0:(index + 1)]
+}
+
+func (m MibReader) parseMibFile(filePath string) *parser.Module {
+	module, err := parser.ParseFile(filePath)
+	if err != nil {
+		fmt.Errorf("Error parsing mib: %v", err)
+	}
+
+	return module
+}
+
+func (m *MibReader) readNewImports(module *parser.Module) []parser.Import {
+	newImports := []parser.Import{}
+
 	// need information on what mibs we have loaded in, just in case we already have the proper information
 	// worry about this last. Don't even know how we are going to store it yet
 	for _, moduleImport := range module.Body.Imports {
 		duplicateModule := false
-		for i := range m.imports {
-			if m.imports[i].Module == moduleImport.Module {
-				duplicateModule = true
+		if moduleImport.Module.String() == "SNMPv2-CONF" {
+			duplicateModule = true
+		} else {
+			for _, mib := range m.loadedOids.GetLoadedMibs() {
+				if mib == moduleImport.Module.String() {
+					duplicateModule = true
+					break
+				}
 			}
 		}
 
-		// probably have to some recursive search for all imports to make sure we have them all
-
 		if !duplicateModule {
-			m.imports = append(m.imports, moduleImport)
+			newImports = append(newImports, moduleImport)
 		}
 	}
 
-	for _, newImport := range m.imports {
-		log.Info(fmt.Sprintf("Import is %s\n", newImport.Module.String()))
-	}
+	return newImports
 }
 
 func (m *MibReader) readNewTypes(module *parser.Module) {
@@ -95,7 +138,7 @@ func (m *MibReader) readNewTypes(module *parser.Module) {
 	}
 
 	for _, newType := range m.types {
-		log.Info(fmt.Sprintf("New type is %s\n", newType.Name.String()))
+		fmt.Printf("New type is %s\n", newType.Name.String())
 	}
 }
 
@@ -122,7 +165,7 @@ func (m *MibReader) readNewOids(module *parser.Module) {
 			parentOid = m.findParentInNewOids(parentName)
 
 			if parentOid == nil {
-				log.Warn(fmt.Sprintf("No suitable parent found for oid: %s\n", newOid.Name.String()))
+				fmt.Printf("No suitable parent found for oid: %s\n", newOid.Name.String())
 			}
 		}
 
@@ -138,6 +181,47 @@ func (m *MibReader) readNewOids(module *parser.Module) {
 			newOidStore.Description = newOid.ObjectIdentity.Description
 			newOidStore.Status = newOid.ObjectIdentity.Status.ToSmi().String()
 			newOidStore.Type = oidstorage.ObjectIdentity
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
+		} else if newOid.ObjectType != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.ObjectType.Description
+			newOidStore.Status = newOid.ObjectType.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.ObjectType
+			newOidStore.Access = newOid.ObjectType.Access.ToSmi().String()
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
+		} else if newOid.ModuleCompliance != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.ModuleCompliance.Description
+			newOidStore.Status = newOid.ModuleCompliance.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.ModuleCompliance
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
+		} else if newOid.ObjectGroup != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.ObjectGroup.Description
+			newOidStore.Status = newOid.ObjectGroup.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.ObjectGroup
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
+		} else if newOid.NotificationType != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.NotificationType.Description
+			newOidStore.Status = newOid.NotificationType.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.NotificationType
+			parentOid.AddChildren(&newOidStore)
+			m.newOids = append(m.newOids, newOidStore)
+		} else if newOid.NotificationGroup != nil {
+			oidNum := appendOidNumber(parentOid.OID, *newOid.Oid.SubIdentifiers[1].Number)
+			newOidStore := oidstorage.CreateNewOid(newOid.Name.String(), oidNum, mibName)
+			newOidStore.Description = newOid.NotificationGroup.Description
+			newOidStore.Status = newOid.NotificationGroup.Status.ToSmi().String()
+			newOidStore.Type = oidstorage.NotificationGroup
 			parentOid.AddChildren(&newOidStore)
 			m.newOids = append(m.newOids, newOidStore)
 		} else {
