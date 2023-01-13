@@ -1,3 +1,14 @@
 build/bin
 frontend/dist
 frontend/node_modules
+tmp
+
+# log files
+*.log
+
+# build artifacts
+stats.html
+
+# coverage
+coverage
+coverage.out

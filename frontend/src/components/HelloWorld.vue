@@ -1,22 +1,9 @@
 <script lang="ts" setup>
-import { reactive } from "vue";
-import { Greet } from "../../wailsjs/go/main/App";
 import { ref } from "vue";
 
 defineProps<{ msg: string }>();
 
 const count = ref(0);
-
-const data = reactive({
-  name: "",
-  resultText: "Please enter your name below 👇",
-});
-
-function greet() {
-  Greet(data.name).then((result) => {
-    data.resultText = result;
-  });
-}
 </script>
 
 <template>

@@ -2,23 +2,27 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/alecthomas/repr"
 	"github.com/sleepinggenius2/gosmi/parser"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-	"github.com/willowbrowser/snmpmibbrowser/internal/oid"
+	"github.com/willowbrowser/snmpmibbrowser/internal/oidstorage"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx        context.Context
+	loadedOids *oidstorage.LoadedOids
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	loadedOids := oidstorage.NewLoadedOids()
+
+	return &App{
+		loadedOids: loadedOids,
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -53,12 +57,6 @@ func (a *App) ParseMib() {
 	}
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
-}
-
-func (a *App) GetCurrentOids() []oid.Oid {
-	var myslice []oid.Oid
-	return myslice
+func (a *App) GetCurrentOids() []oidstorage.Oid {
+	return a.loadedOids.GetLoadedOids()
 }

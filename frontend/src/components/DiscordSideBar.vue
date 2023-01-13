@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import SideBarIcon from "./SideBarIcon.vue";
-import Divider from "./partials/Divider.vue";
+import SideBarIcon from "@/components/SideBarIcon.vue";
+import Divider from "@/components/partials/Divider.vue";
 import YouTubeIcon from "~icons/mdi/youtube";
 import BlenderSoftwareIcon from "~icons/mdi/blender-software";
 </script>

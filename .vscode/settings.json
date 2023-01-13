@@ -5,5 +5,27 @@
     },
     "files.associations": {
         "*.css": "tailwindcss"
-    }
+    },
+    "editor.quickSuggestions": {
+      "other": "on",
+      "comments": "off",
+      "strings": "on"
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "eslint.validate": [
+      "typescript",
+      "typescriptreact",
+      "javascript",
+      "javascriptreact",
+      "vue"
+    ],
+    "eslint.packageManager": "yarn",
+    "cSpell.words": [
+        "mibreader",
+        "Oids",
+        "snmp"
+    ],
+    "vitest.enable": true,
 }
